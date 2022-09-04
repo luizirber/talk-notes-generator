@@ -4,6 +4,7 @@ use camino::Utf8PathBuf as PathBuf;
 use clap::Parser;
 use color_eyre::eyre::Result;
 use once_cell::sync::Lazy;
+use pulldown_cmark::{html, Options, Parser as MdParser};
 use serde::{Deserialize, Serialize};
 use tera::Tera;
 use yaml_front_matter::{Document, YamlFrontMatter};
@@ -17,6 +18,7 @@ static TEMPLATE: Lazy<Tera> = Lazy::new(|| {
             ::std::process::exit(1);
         }
     };
+    tera.autoescape_on(vec![]);
     tera
 });
 
@@ -68,9 +70,22 @@ fn main() -> Result<()> {
     let md = std::fs::read_to_string(cli.md)?;
     let document: Document<Metadata> = YamlFrontMatter::parse::<Metadata>(&md).unwrap();
 
+    let options = Options::empty();
+    let slides: Vec<String> = document
+        .content
+        .split("\n--\n")
+        .map(|chunk| {
+            let parser = MdParser::new_ext(chunk, options);
+
+            let mut html_output = String::new();
+            html::push_html(&mut html_output, parser);
+            html_output
+        })
+        .collect();
+
     let product = Context {
         metadata: document.metadata,
-        slides: vec!["1".into(), "2".into(), "3".into()],
+        slides: slides,
     };
     let result = TEMPLATE.render("slides.html", &tera::Context::from_serialize(&product)?)?;
 
