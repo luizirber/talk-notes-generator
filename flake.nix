@@ -128,12 +128,8 @@
           inputsFrom = builtins.attrValues self.checks;
 
           buildInputs = with pkgs; [
-              oha
-              awscli2
-              rclone
-              terraform
               nixpkgs-fmt
-              asciinema
+              imagemagick7Big
           ];
         });
       });

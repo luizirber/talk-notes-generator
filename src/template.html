@@ -12,7 +12,7 @@ td { vertical-align:top;font-size:small;padding:20px; }
 body { font-family:verdana;font-size:small;text-align:center;line-height:140%;
      }
 #main { text-align:left;width:900px;margin:auto; }
-img { border:1px solid #8ac;width:290px;height:160px; }
+img { border:1px solid #8ac;width:440px;height:330px; }
 li { margin-bottom:5px }
 blockquote { font-style:italic; }
 hr { border:1px solid #ddd; }
@@ -22,7 +22,9 @@ hr { border:1px solid #ddd; }
 <body>
 <div id="main"> <p><a href="https://luizirber.org/">Luiz Irber</a> > <a href="https://luizirber.org/talks/">Talks</a> > {{ metadata.title }}
 
-<div style="background:#ffe;padding:4px;padding-left:12px;border:1px solid #aaa;margin-bottom:30px;"> <p>This is the text version of a talk I gave on {{ metadata.date }}, at the <a href="https://usermeeting.jgi.doe.gov/agenda/">JGI Annual User Meeting</a> conference in {{ metadata.location }}.
+<div style="background:#ffe;padding:4px;padding-left:12px;border:1px solid #aaa;margin-bottom:30px;">
+  <p>This is the text version of a talk I gave on {{ metadata.date | date(format="%Y-%m-%d") }},
+      at the <a href="{{ metadata.link }}">{{ metadata.event_name }}</a> conference in {{ metadata.location }}.
 </div>
 
 <h1>{{ metadata.title }}</h1>
@@ -32,7 +34,7 @@ hr { border:1px solid #ddd; }
 {% for annotation in slides %}
 <tr>
   <td>
-    <img src="thumbs/001.jpg"></td>
+    <img src="thumbs/{{ loop.index0 }}.jpg"></td>
   <td>
       {{ annotation }}
   </td>

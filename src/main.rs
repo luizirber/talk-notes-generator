@@ -43,6 +43,8 @@ struct Metadata {
     title: String,
     date: String,
     location: String,
+    link: String,
+    event_name: String,
 }
 
 #[derive(Serialize)]
