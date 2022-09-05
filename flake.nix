@@ -129,7 +129,8 @@
 
           buildInputs = with pkgs; [
               nixpkgs-fmt
-              imagemagick7Big
+              graphicsmagick
+              libwebp
           ];
         });
       });

@@ -3,6 +3,7 @@ use std::io::Write;
 use camino::Utf8PathBuf as PathBuf;
 use clap::Parser;
 use color_eyre::eyre::Result;
+use graphicsmagick::wand::MagickWand;
 use once_cell::sync::Lazy;
 use pulldown_cmark::{html, Options, Parser as MdParser};
 use serde::{Deserialize, Serialize};
@@ -55,6 +56,7 @@ struct Context {
 
 fn main() -> Result<()> {
     color_eyre::install()?;
+    graphicsmagick::initialize();
 
     let cli = Cli::parse();
 
@@ -67,7 +69,18 @@ fn main() -> Result<()> {
         cli.pdf.file_stem().unwrap().into()
     };
     println!("Value for output: {}", output_path);
+
     std::fs::create_dir_all(output_path)?;
+
+    let mut thumb_path = output_path.to_path_buf();
+    thumb_path.push("thumbs");
+
+    let mut thumb = thumb_path.clone();
+    thumb.push("%0d.jpg");
+
+    let mut mw = MagickWand::new();
+    mw.read_image(cli.pdf.as_str())?
+        .write_images(thumb.as_str(), 0)?;
 
     let md = std::fs::read_to_string(cli.md)?;
     let document: Document<Metadata> = YamlFrontMatter::parse::<Metadata>(&md).unwrap();
